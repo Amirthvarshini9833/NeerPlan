@@ -29,6 +29,9 @@ model Assessment {
   areaSource             String          @default("Manual user input")
   areaDataSourceUrl      String?
   areaLocation           String?
+  buildingType           String          @default("independent_house")
+  availableSpace         String          @default("moderate")
+  recommendationJson     String?
   roofType               String
   annualRainfallMm       Float
   rainfallSource         String          @default("Manual user input")

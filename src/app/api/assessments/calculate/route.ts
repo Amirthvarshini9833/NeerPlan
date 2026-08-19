@@ -8,6 +8,8 @@ const assessmentInput = z.object({
   roofType: z.enum(["concrete", "metal", "tiles"]),
   annualRainfallMm: z.number().min(100).max(10000),
   occupants: z.number().int().min(1).max(10000),
+  buildingType: z.enum(["independent_house", "apartment", "commercial"]).default("independent_house"),
+  availableSpace: z.enum(["limited", "moderate", "ample"]).default("moderate"),
 });
 
 export async function POST(request: Request) {

@@ -47,6 +47,10 @@ Users are homeowners by default. Designate trusted accounts as `INSTALLER` or `A
 
 The compliance checklist is practical readiness guidance only. It is not a permit, engineering sign-off, or legal approval.
 
+## Installation recommendations
+
+Each calculation recommends a storage tank, groundwater recharge, or hybrid system using roof collection, rainfall, occupants, building type, and available installation space. It shows the rule basis, tank and recharge capacity, component checklist, and an indicative Indian-rupee cost range. The recommendation is planning guidance only; a qualified installer or engineer must confirm the final design, soil and structural conditions, water quality, permits, and quotation.
+
 Run the local quality checks with:
 
 ```bash
