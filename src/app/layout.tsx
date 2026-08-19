@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./quote-form.css";
 import "./dashboard-style.css";
+import "./hero-style.css";
 import { SiteHeader } from "@/components/site-header";
 import { LanguageProvider } from "@/components/language-provider";
 
