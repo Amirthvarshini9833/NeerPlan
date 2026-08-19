@@ -16,9 +16,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!parsed.success) return NextResponse.json({ error: "Please provide a name and valid phone number." }, { status: 400 });
 
   const { id } = await params;
-  const assessment = await prisma.assessment.findFirst({ where: { id, userId: token.sub }, select: { id: true } });
+  const assessment = await prisma.assessment.findFirst({ where: { id, userId: token.sub }, select: { id: true, city: true } });
   if (!assessment) return NextResponse.json({ error: "Assessment not found." }, { status: 404 });
 
-  const lead = await prisma.installerLead.create({ data: { assessmentId: assessment.id, ...parsed.data } });
-  return NextResponse.json({ id: lead.id }, { status: 201 });
+  const installers = await prisma.user.findMany({ where: { role: "INSTALLER" }, select: { id: true, serviceAreas: true } });
+  const city = assessment.city.toLowerCase();
+  const matched = installers.find((installer) => installer.serviceAreas?.split(",").some((area) => area.trim().toLowerCase() === city));
+  const lead = await prisma.installerLead.create({ data: { assessmentId: assessment.id, installerId: matched?.id ?? null, ...parsed.data } });
+  return NextResponse.json({ id: lead.id, matchedInstaller: Boolean(matched) }, { status: 201 });
 }

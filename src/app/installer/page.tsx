@@ -8,9 +8,9 @@ export default async function InstallerDashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) redirect("/login");
   const installer = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true, role: true } });
-  if (!installer || !["INSTALLER", "ADMIN"].includes(installer.role)) redirect("/dashboard");
+  if (!installer || installer.role !== "INSTALLER") redirect("/dashboard");
   const leads = await prisma.installerLead.findMany({
-    where: installer.role === "ADMIN" ? {} : { installerId: installer.id },
+    where: { installerId: installer.id },
     include: { assessment: { select: { city: true, roofAreaSqFt: true, suggestedTankLitres: true, quoteCountRequested: true } }, quotes: { orderBy: { priceInr: "asc" } } },
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
   });
