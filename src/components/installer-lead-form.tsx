@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { QuoteComparison } from "@/components/quote-comparison";
+import { useLanguage } from "@/components/language-provider";
 
 export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -22,7 +24,7 @@ export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to send your request.");
       setLeadId(data.id);
-      setMessage("Thanks — your request has been shared with our installer network.");
+      setMessage(t("requestShared"));
       form.reset();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to send your request.");
@@ -33,14 +35,14 @@ export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
 
   return <section className="lead-form" aria-labelledby="installer-heading">
     <div>
-      <p className="eyebrow">NEXT STEP</p>
-      <h3 id="installer-heading">Talk to a local installer.</h3>
-      <p>Request a site survey to refine this estimate and get an installation quote.</p>
+      <p className="eyebrow">{t("nextStep")}</p>
+      <h3 id="installer-heading">{t("installerTitle")}</h3>
+      <p>{t("installerText")}</p>
     </div>
     <form onSubmit={submit}>
-      <label>Name<input name="name" autoComplete="name" minLength={2} maxLength={80} required /></label>
-      <label>Phone number<input name="phone" type="tel" autoComplete="tel" minLength={7} maxLength={30} required /></label>
-      <button disabled={sending}>{sending ? "Sending…" : "Request a survey"}</button>
+      <label>{t("name")}<input name="name" autoComplete="name" minLength={2} maxLength={80} required /></label>
+      <label>{t("phone")}<input name="phone" type="tel" autoComplete="tel" minLength={7} maxLength={30} required /></label>
+      <button disabled={sending}>{sending ? t("sending") : t("requestSurvey")}</button>
       {message && <p className="form-message" role="status">{message}</p>}
     </form>
     {leadId && <QuoteComparison assessmentId={assessmentId} />}

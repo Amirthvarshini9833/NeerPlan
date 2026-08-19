@@ -1,6 +1,8 @@
 "use client";
+import { useLanguage } from "@/components/language-provider";
 
 export function ReportActions() {
+  const { t } = useLanguage();
   function downloadReport() {
     const report = document.querySelector(".report-sheet")?.textContent?.replace(/\n\s*\n/g, "\n\n").trim();
     if (!report) return;
@@ -13,8 +15,8 @@ export function ReportActions() {
   }
 
   return <div className="report-actions no-print">
-    <button type="button" onClick={() => window.print()}>Print or save as PDF</button>
-    <button type="button" onClick={downloadReport}>Download text report</button>
-    <a href="/dashboard">Back to dashboard</a>
+    <button type="button" onClick={() => window.print()}>{t("print")}</button>
+    <button type="button" onClick={downloadReport}>{t("download")}</button>
+    <a href="/dashboard">{t("back")}</a>
   </div>;
 }
