@@ -28,7 +28,11 @@ export function RooftopMapPicker({ initialQuery, onAreaChange, onLocationChange 
     import("leaflet").then((L) => {
       if (cancelled || !mapElement.current || mapInstance.current) return;
       const map = L.map(mapElement.current).setView([defaultCenter.latitude, defaultCenter.longitude], 12);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors", maxZoom: 19 }).addTo(map);
+      const normal = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors", maxZoom: 19 });
+      const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri, Maxar, Earthstar Geographics", maxZoom: 19 });
+      const terrain = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { attribution: "Map data &copy; OpenStreetMap contributors, SRTM | Map style &copy; OpenTopoMap", maxZoom: 17 });
+      normal.addTo(map);
+      L.control.layers({ Normal: normal, Satellite: satellite, Terrain: terrain }, undefined, { collapsed: false }).addTo(map);
       const layers = L.layerGroup().addTo(map);
       map.on("click", (event) => setPoints((current) => {
         if (current.length >= 12) { setMessage("Use at most 12 boundary points."); return current; }
@@ -83,6 +87,6 @@ export function RooftopMapPicker({ initialQuery, onAreaChange, onLocationChange 
     <div ref={mapElement} className="rooftop-map" role="application" aria-label="OpenStreetMap rooftop drawing map" />
     <div className="map-toolbar"><button type="button" className="secondary-button" onClick={clear}>Clear boundary</button><span>Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.</span></div>
     {message && <p className="form-message" role="status">{message}</p>}
-    <p className="map-attribution">Map data © <a href={sourceUrl} target="_blank" rel="noreferrer">OpenStreetMap contributors</a>. Area is an estimate based on your drawn boundary.</p>
+    <p className="map-attribution">Use the layer switcher for Normal, Satellite, or Terrain views. Satellite imagery © Esri; map data © <a href={sourceUrl} target="_blank" rel="noreferrer">OpenStreetMap contributors</a>. Area is an estimate based on your drawn boundary.</p>
   </section>;
 }
