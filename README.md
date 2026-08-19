@@ -63,3 +63,7 @@ The application uses Next.js, TypeScript, Tailwind CSS, Prisma, SQLite/PostgreSQ
 The assessment can retrieve a city-based annual rainfall estimate for India from the [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api). It averages daily precipitation for the ten most recently completed calendar years, shows the source and retrieval date, and records those details in a saved assessment report. A value typed into the rainfall field is always a manual user override. If the lookup cannot match a city or the service is unavailable, the existing manual value remains unchanged.
 
 Open-Meteo's free API is suitable for this initial non-commercial use and requires attribution under its published terms. Review its [terms of service](https://open-meteo.com/en/terms) before commercial use or a high-volume rollout.
+
+## Map-based rooftop area
+
+The assessment also offers an optional OpenStreetMap map. Search an Indian city or address, click three to twelve points around a rooftop, and drag the markers to adjust the boundary. NeerPlan estimates the polygon area in square feet and validates that it is between 20 and 100,000 sq ft and does not self-intersect. Typing a roof area manually always overrides the map estimate. Saved assessments record whether the area was manual or drawn from the OpenStreetMap map, along with the selected location and attribution link.

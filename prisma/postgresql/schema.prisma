@@ -26,6 +26,9 @@ model Assessment {
   user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   city                   String
   roofAreaSqFt           Float
+  areaSource             String          @default("Manual user input")
+  areaDataSourceUrl      String?
+  areaLocation           String?
   roofType               String
   annualRainfallMm       Float
   rainfallSource         String          @default("Manual user input")
