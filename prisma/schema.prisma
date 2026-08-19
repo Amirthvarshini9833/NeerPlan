@@ -27,6 +27,9 @@ model Assessment {
   roofAreaSqFt           Float
   roofType               String
   annualRainfallMm       Float
+  rainfallSource         String          @default("Manual user input")
+  rainfallDataPeriod     String?
+  rainfallRetrievedAt    DateTime?
   occupants              Int             @default(1)
   annualCollectionLitres Float
   suggestedTankLitres    Int

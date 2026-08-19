@@ -57,3 +57,9 @@ pnpm build
 `lint` currently runs the strict TypeScript check. The installed ESLint/TypeScript versions are not mutually compatible, so it is intentionally not invoked until those developer dependencies are upgraded together.
 
 The application uses Next.js, TypeScript, Tailwind CSS, Prisma, SQLite/PostgreSQL, and NextAuth — all free and open-source tools.
+
+## Location-based rainfall estimates
+
+The assessment can retrieve a city-based annual rainfall estimate for India from the [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api). It averages daily precipitation for the ten most recently completed calendar years, shows the source and retrieval date, and records those details in a saved assessment report. A value typed into the rainfall field is always a manual user override. If the lookup cannot match a city or the service is unavailable, the existing manual value remains unchanged.
+
+Open-Meteo's free API is suitable for this initial non-commercial use and requires attribution under its published terms. Review its [terms of service](https://open-meteo.com/en/terms) before commercial use or a high-volume rollout.
