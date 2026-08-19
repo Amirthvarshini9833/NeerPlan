@@ -4,6 +4,7 @@ import { calculateAssessment } from "@/lib/calculations";
 
 const assessmentInput = z.object({
   city: z.string().trim().min(2).max(100),
+  state: z.string().trim().min(2).max(80).default("Tamil Nadu"),
   roofAreaSqFt: z.number().min(20).max(100000),
   roofType: z.enum(["concrete", "metal", "tiles"]),
   annualRainfallMm: z.number().min(100).max(10000),

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS Assessment (
   id TEXT PRIMARY KEY NOT NULL,
   userId TEXT NOT NULL,
   city TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'Tamil Nadu',
   roofAreaSqFt REAL NOT NULL,
   areaSource TEXT NOT NULL DEFAULT 'Manual user input',
   areaDataSourceUrl TEXT,
@@ -21,6 +22,9 @@ CREATE TABLE IF NOT EXISTS Assessment (
   buildingType TEXT NOT NULL DEFAULT 'independent_house',
   availableSpace TEXT NOT NULL DEFAULT 'moderate',
   recommendationJson TEXT,
+  complianceStatus TEXT NOT NULL DEFAULT 'PENDING_MUNICIPAL_CONFIRMATION',
+  quoteCountRequested INTEGER NOT NULL DEFAULT 0,
+  quoteRequestStatus TEXT NOT NULL DEFAULT 'NOT_REQUESTED',
   roofType TEXT NOT NULL,
   annualRainfallMm REAL NOT NULL,
   rainfallSource TEXT NOT NULL DEFAULT 'Manual user input',
@@ -50,3 +54,20 @@ CREATE TABLE IF NOT EXISTS InstallerLead (
 );
 
 CREATE INDEX IF NOT EXISTS InstallerLead_installerId_status_idx ON InstallerLead(installerId, status);
+
+CREATE TABLE IF NOT EXISTS InstallerQuote (
+  id TEXT PRIMARY KEY NOT NULL,
+  leadId TEXT NOT NULL,
+  installerId TEXT NOT NULL,
+  systemType TEXT NOT NULL,
+  tankLitres INTEGER,
+  material TEXT NOT NULL,
+  warrantyMonths INTEGER NOT NULL,
+  priceInr REAL NOT NULL,
+  installationDate TEXT,
+  notes TEXT,
+  createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (leadId) REFERENCES InstallerLead(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS InstallerQuote_leadId_priceInr_idx ON InstallerQuote(leadId, priceInr);

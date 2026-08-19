@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { InstallerLeadForm } from "@/components/installer-lead-form";
+import { ComplianceChecklist } from "@/components/compliance-checklist";
 import { RooftopMapPicker, type AreaSelection } from "@/components/rooftop-map-picker";
 import { calculateAssessment, type AssessmentInput } from "@/lib/calculations";
 
@@ -13,7 +14,7 @@ const format = (value: number) => new Intl.NumberFormat("en-IN", { maximumFracti
 const formatDate = (value: string) => new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(value));
 
 export function AssessmentForm() {
-  const [input, setInput] = useState<AssessmentInput>({ city: "Bengaluru", roofAreaSqFt: 1200, roofType: "concrete", annualRainfallMm: 970, occupants: 4, buildingType: "independent_house", availableSpace: "moderate" });
+  const [input, setInput] = useState<AssessmentInput>({ city: "Bengaluru", state: "Karnataka", roofAreaSqFt: 1200, roofType: "concrete", annualRainfallMm: 970, occupants: 4, buildingType: "independent_house", availableSpace: "moderate" });
   const [result, setResult] = useState<ReturnType<typeof calculateAssessment> | null>(null);
   const [provenance, setProvenance] = useState<RainfallProvenance>(manualProvenance);
   const [areaProvenance, setAreaProvenance] = useState<{ source: string; sourceUrl?: string; location?: string }>(manualAreaProvenance);
@@ -24,6 +25,7 @@ export function AssessmentForm() {
   const [rainfallMessage, setRainfallMessage] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [savedAssessmentId, setSavedAssessmentId] = useState<string | null>(null);
+  const [complianceStatus, setComplianceStatus] = useState("PENDING_MUNICIPAL_CONFIRMATION");
 
   function update(key: keyof AssessmentInput, value: string) {
     setInput((current) => ({ ...current, [key]: key === "city" || key === "roofType" || key === "buildingType" || key === "availableSpace" ? value : Number(value) } as AssessmentInput));
@@ -54,7 +56,7 @@ export function AssessmentForm() {
   async function saveAssessment() {
     setSaveMessage(""); setSaving(true);
     try {
-      const response = await fetch("/api/assessments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...input, areaSource: areaProvenance.source, areaDataSourceUrl: areaProvenance.sourceUrl, areaLocation: areaProvenance.location, recommendationJson: result ? JSON.stringify(result.recommendation) : undefined, rainfallSource: provenance.source, rainfallDataPeriod: provenance.period, rainfallRetrievedAt: provenance.retrievedAt }) }); const data = await response.json();
+      const response = await fetch("/api/assessments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...input, areaSource: areaProvenance.source, areaDataSourceUrl: areaProvenance.sourceUrl, areaLocation: areaProvenance.location, recommendationJson: result ? JSON.stringify(result.recommendation) : undefined, complianceStatus, rainfallSource: provenance.source, rainfallDataPeriod: provenance.period, rainfallRetrievedAt: provenance.retrievedAt }) }); const data = await response.json();
       if (response.status === 401) { setSaveMessage("Sign in or create an account to save this assessment."); return; }
       if (!response.ok) throw new Error(data.error ?? "Unable to save this assessment."); setSavedAssessmentId(data.id); setSaveMessage("Assessment saved to your dashboard.");
     } catch (reason) { setSaveMessage(reason instanceof Error ? reason.message : "Unable to save this assessment."); } finally { setSaving(false); }
@@ -67,7 +69,7 @@ export function AssessmentForm() {
   }
 
   return <section className="assessment"><div><p className="eyebrow">FREE ASSESSMENT</p><h2>Understand your rooftop potential.</h2><p>Every estimate shows its calculation basis and can be refined during a site survey.</p></div><form onSubmit={submit}>
-    <label>City<input value={input.city} onChange={(event) => update("city", event.target.value)} /></label>
+    <div className="fields"><label>City<input value={input.city} onChange={(event) => update("city", event.target.value)} /></label><label>State / UT<select value={input.state} onChange={(event) => update("state", event.target.value)}><option>Tamil Nadu</option><option>Karnataka</option><option>Kerala</option><option>Andhra Pradesh</option><option>Telangana</option><option>Maharashtra</option><option>Other / confirm locally</option></select></label></div>
     <RooftopMapPicker initialQuery={input.city} onAreaChange={applyAreaSelection} onLocationChange={(location) => { setInput((current) => ({ ...current, city: location.split(",")[0] })); setAreaProvenance((current) => ({ ...current, location })); }} />
     <div className="fields"><label>Roof area (sq ft)<input type="number" min="20" max="100000" value={input.roofAreaSqFt} onChange={(event) => update("roofAreaSqFt", event.target.value)} /><span className="field-help">Manual override available. Source: {areaProvenance.source}{areaProvenance.location && <> · {areaProvenance.location}</>}</span></label><label>Roof type<select value={input.roofType} onChange={(event) => update("roofType", event.target.value)}><option value="concrete">Concrete terrace</option><option value="metal">Metal roof</option><option value="tiles">Tiled roof</option></select></label></div>
     <div className="fields"><label>Building type<select value={input.buildingType} onChange={(event) => update("buildingType", event.target.value)}><option value="independent_house">Independent house</option><option value="apartment">Apartment / shared building</option><option value="commercial">Commercial building</option></select></label><label>Available installation space<select value={input.availableSpace} onChange={(event) => update("availableSpace", event.target.value)}><option value="limited">Limited</option><option value="moderate">Moderate</option><option value="ample">Ample</option></select></label></div>

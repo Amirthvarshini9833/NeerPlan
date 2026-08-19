@@ -1,7 +1,7 @@
 export type RoofType = "concrete" | "metal" | "tiles";
 export type BuildingType = "independent_house" | "apartment" | "commercial";
 export type AvailableSpace = "limited" | "moderate" | "ample";
-export type AssessmentInput = { city: string; roofAreaSqFt: number; roofType: RoofType; annualRainfallMm: number; occupants: number; buildingType: BuildingType; availableSpace: AvailableSpace };
+export type AssessmentInput = { city: string; state: string; roofAreaSqFt: number; roofType: RoofType; annualRainfallMm: number; occupants: number; buildingType: BuildingType; availableSpace: AvailableSpace };
 export type RecommendationSystem = "Storage tank system" | "Groundwater recharge system" | "Hybrid storage + recharge system";
 export type InstallationRecommendation = { system: RecommendationSystem; reason: string; suggestedTankLitres: number; rechargeCapacityLitres: number; costRangeInr: [number, number]; components: string[]; assumptions: string[] };
 const runoff: Record<RoofType, number> = { concrete: 0.82, metal: 0.9, tiles: 0.75 };

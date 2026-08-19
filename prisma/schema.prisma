@@ -24,6 +24,7 @@ model Assessment {
   userId                 String
   user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   city                   String
+  state                  String          @default("Tamil Nadu")
   roofAreaSqFt           Float
   areaSource             String          @default("Manual user input")
   areaDataSourceUrl      String?
@@ -31,6 +32,9 @@ model Assessment {
   buildingType           String          @default("independent_house")
   availableSpace         String          @default("moderate")
   recommendationJson     String?
+  complianceStatus       String          @default("PENDING_MUNICIPAL_CONFIRMATION")
+  quoteCountRequested    Int             @default(0)
+  quoteRequestStatus     String          @default("NOT_REQUESTED")
   roofType               String
   annualRainfallMm       Float
   rainfallSource         String          @default("Manual user input")
@@ -57,6 +61,24 @@ model InstallerLead {
   phone        String
   status       String     @default("NEW")
   createdAt    DateTime   @default(now())
+  quotes       InstallerQuote[]
 
   @@index([installerId, status])
+}
+
+model InstallerQuote {
+  id               String        @id @default(cuid())
+  leadId           String
+  lead             InstallerLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  installerId      String
+  systemType       String
+  tankLitres       Int?
+  material         String
+  warrantyMonths   Int
+  priceInr         Float
+  installationDate DateTime?
+  notes            String?
+  createdAt        DateTime      @default(now())
+
+  @@index([leadId, priceInr])
 }
