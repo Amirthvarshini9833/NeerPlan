@@ -8,18 +8,19 @@ export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setMessage("");
     setSending(true);
     try {
       const response = await fetch(`/api/assessments/${assessmentId}/leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))),
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to send your request.");
       setMessage("Thanks — your request has been shared with our installer network.");
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to send your request.");
     } finally {
