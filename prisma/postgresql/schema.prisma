@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String?
+  passwordHash  String
+  role          String          @default("HOMEOWNER")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  assessments   Assessment[]
+  assignedLeads InstallerLead[] @relation("InstallerAssignments")
+}
+
+model Assessment {
+  id                     String          @id @default(cuid())
+  userId                 String
+  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  city                   String
+  roofAreaSqFt           Float
+  roofType               String
+  annualRainfallMm       Float
+  occupants              Int             @default(1)
+  annualCollectionLitres Float
+  suggestedTankLitres    Int
+  estimatedSavingsInr    Float
+  estimatedSetupCostInr  Float
+  paybackYears           Float
+  calculationVersion     String          @default("1.0")
+  createdAt              DateTime        @default(now())
+  leads                  InstallerLead[]
+}
+
+model InstallerLead {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  installerId  String?
+  installer    User?      @relation("InstallerAssignments", fields: [installerId], references: [id], onDelete: SetNull)
+  name         String
+  phone        String
+  status       String     @default("NEW")
+  createdAt    DateTime   @default(now())
+
+  @@index([installerId, status])
+}
