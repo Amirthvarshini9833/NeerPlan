@@ -14,3 +14,4 @@ const extras: Record<Language, Record<string, string>> = {
   hi: {}, te: {}, kn: {}, ml: {},
 };
 for (const language of Object.keys(translations) as Language[]) translations[language] = { ...extras.en, ...extras[language], ...translations[language] };
+for (const language of Object.keys(translations) as Language[]) Object.assign(translations[language], { city: "City", state: "State / UT", roofArea: "Roof area (sq ft)", roofType: "Roof type", buildingType: "Building type", installationSpace: "Available installation space", rainfall: "Annual rainfall (mm)", people: "People using water", locationEstimate: "Location-based estimate", useEstimate: "Use city estimate", manualOverride: "Manual override available.", concrete: "Concrete terrace", metal: "Metal roof", tiles: "Tiled roof", independent: "Independent house", apartment: "Apartment / shared building", commercial: "Commercial building", limited: "Limited", moderate: "Moderate", ample: "Ample" });

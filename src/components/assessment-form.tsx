@@ -6,6 +6,7 @@ import { InstallerLeadForm } from "@/components/installer-lead-form";
 import { ComplianceChecklist } from "@/components/compliance-checklist";
 import { RooftopMapPicker, type AreaSelection } from "@/components/rooftop-map-picker";
 import { calculateAssessment, type AssessmentInput } from "@/lib/calculations";
+import { useLanguage } from "@/components/language-provider";
 
 type RainfallProvenance = { source: string; period?: string; retrievedAt?: string; sourceUrl?: string };
 const manualProvenance: RainfallProvenance = { source: "Manual user input" };
@@ -14,6 +15,7 @@ const format = (value: number) => new Intl.NumberFormat("en-IN", { maximumFracti
 const formatDate = (value: string) => new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(value));
 
 export function AssessmentForm() {
+  const { t } = useLanguage();
   const [input, setInput] = useState<AssessmentInput>({ city: "Bengaluru", state: "Karnataka", roofAreaSqFt: 1200, roofType: "concrete", annualRainfallMm: 970, occupants: 4, buildingType: "independent_house", availableSpace: "moderate" });
   const [result, setResult] = useState<ReturnType<typeof calculateAssessment> | null>(null);
   const [provenance, setProvenance] = useState<RainfallProvenance>(manualProvenance);
