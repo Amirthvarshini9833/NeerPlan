@@ -1,16 +1,19 @@
-import { getServerSession } from "next-auth";
+"use client";
 import Link from "next/link";
-import { authOptions } from "@/lib/auth";
+import { useSession } from "next-auth/react";
+import { LanguageSelector } from "@/components/language-selector";
+import { useLanguage } from "@/components/language-provider";
 
-export async function SiteHeader() {
-  const session = await getServerSession(authOptions);
+export function SiteHeader() {
+  const { data: session } = useSession();
+  const { t } = useLanguage();
 
   return (
     <header className="site-header">
       <Link className="brand" href="/">Neer<span>Plan</span></Link>
       <nav aria-label="Primary navigation">
-        <Link href="/#assessment">Assessment</Link>
-        {session?.user?.email ? <><Link href="/dashboard">Dashboard</Link><Link href="/installer">Installer portal</Link></> : <Link href="/login">Sign in</Link>}
+        <Link href="/#assessment">{t("assessment")}</Link>
+        {session?.user?.email ? <><Link href="/dashboard">{t("dashboard")}</Link><Link href="/installer">{t("installer")}</Link></> : <Link href="/login">{t("signIn")}</Link>}<LanguageSelector />
       </nav>
     </header>
   );
