@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./quote-form.css";
 import "./dashboard-style.css";
 import "./hero-style.css";
 import "./admin/admin-style.css";

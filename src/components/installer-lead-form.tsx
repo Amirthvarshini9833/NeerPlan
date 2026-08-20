@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { QuoteComparison } from "@/components/quote-comparison";
 import { useLanguage } from "@/components/language-provider";
 
 export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
-  const [leadId, setLeadId] = useState<string | null>(null);
   const { t } = useLanguage();
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -23,7 +21,6 @@ export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to send your request.");
-      setLeadId(data.id);
       setMessage(t("requestShared"));
       form.reset();
     } catch (error) {
@@ -45,6 +42,5 @@ export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
       <button disabled={sending}>{sending ? t("sending") : t("requestSurvey")}</button>
       {message && <p className="form-message" role="status">{message}</p>}
     </form>
-    {leadId && <QuoteComparison assessmentId={assessmentId} />}
   </section>;
 }

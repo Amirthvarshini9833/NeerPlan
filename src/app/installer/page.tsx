@@ -11,9 +11,9 @@ export default async function InstallerDashboardPage() {
   if (!installer || installer.role !== "INSTALLER") redirect("/dashboard");
   const leads = await prisma.installerLead.findMany({
     where: { installerId: installer.id },
-    include: { assessment: { select: { city: true, state: true, roofAreaSqFt: true, areaSource: true, areaLocation: true, roofType: true, annualRainfallMm: true, rainfallSource: true, occupants: true, buildingType: true, availableSpace: true, suggestedTankLitres: true, quoteCountRequested: true, recommendationJson: true } }, quotes: { orderBy: { priceInr: "asc" } } },
+    include: { assessment: { select: { city: true, state: true, roofAreaSqFt: true, areaSource: true, areaLocation: true, roofType: true, annualRainfallMm: true, rainfallSource: true, occupants: true, buildingType: true, availableSpace: true, suggestedTankLitres: true, recommendationJson: true } } },
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
   });
-  const initialLeads = leads.map((lead) => { let recommendationSystem = ""; try { recommendationSystem = lead.assessment.recommendationJson ? JSON.parse(lead.assessment.recommendationJson).system ?? "" : ""; } catch { recommendationSystem = ""; } return { ...lead, quoteCountRequested: lead.assessment.quoteCountRequested, recommendationSystem, createdAt: lead.createdAt.toISOString(), quotes: lead.quotes.map((quote) => ({ ...quote, createdAt: quote.createdAt.toISOString(), installationDate: quote.installationDate?.toISOString() ?? null })) }; });
+  const initialLeads = leads.map((lead) => { let recommendationSystem = ""; try { recommendationSystem = lead.assessment.recommendationJson ? JSON.parse(lead.assessment.recommendationJson).system ?? "" : ""; } catch { recommendationSystem = ""; } return { ...lead, recommendationSystem, createdAt: lead.createdAt.toISOString() }; });
   return <main className="installer-dashboard"><p className="eyebrow">INSTALLER PORTAL</p><h1>Site-survey requests</h1><p>Review assigned rooftop assessments and keep each homeowner informed as the survey progresses.</p><InstallerLeadList initialLeads={initialLeads} /></main>;
 }
