@@ -27,3 +27,6 @@ h1 { max-width: 720px; margin: 0; font-size: clamp(3rem, 8vw, 6rem); letter-spac
 .lead-list dl div{display:grid;gap:5px;min-width:0;padding:10px 12px;background:#f1f7f3;border:1px solid #d6e6dd;border-radius:8px}
 .lead-list dd{overflow-wrap:anywhere}
 @media(max-width:680px){.lead-list article{grid-template-columns:1fr}.lead-list dl{grid-template-columns:1fr}}
+.lead-form textarea{border:1px solid #d8e4de;border-radius:5px;padding:10px;resize:vertical;font:inherit}
+.lead-purpose{display:grid;gap:4px;margin:12px 0 0;color:#557069;font-size:13px;line-height:1.45}
+.lead-purpose strong{color:#153b3a;font-size:12px}

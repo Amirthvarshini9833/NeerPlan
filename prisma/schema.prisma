@@ -60,6 +60,7 @@ model InstallerLead {
   installer    User?      @relation("InstallerAssignments", fields: [installerId], references: [id], onDelete: SetNull)
   name         String
   phone        String
+  contactPurpose String @default("")
   status       String     @default("NEW")
   createdAt    DateTime   @default(now())
   quotes       InstallerQuote[]
