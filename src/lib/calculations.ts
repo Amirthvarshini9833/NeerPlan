@@ -17,7 +17,7 @@ export function recommendInstallation(input: AssessmentInput, annualCollectionLi
   const reason = system === "Storage tank system"
     ? `The roof can collect about ${Math.round(collectionToDemand * 100)}% of estimated annual household demand, rainfall is relatively high, and available space supports a larger tank.`
     : system === "Groundwater recharge system"
-      ? `Available space is constrained or collected water is below ${Math.round(collectionToDemand * 100)}% of estimated demand, so directing filtered overflow into recharge is more practical than relying on a large tank.`
+      ? `Use a filter and recharge pit to return excess rainwater to the ground when tank storage is limited.`
       : `The roof can supply about ${Math.round(collectionToDemand * 100)}% of estimated demand, so a moderate tank can cover useful non-potable needs while excess rainfall is sent to recharge.`;
   const costRangeInr: [number, number] = system === "Storage tank system"
     ? [Math.round((45000 + suggestedTankLitres * 12) / 5000) * 5000, Math.round((90000 + suggestedTankLitres * 24) / 5000) * 5000]
@@ -27,7 +27,7 @@ export function recommendInstallation(input: AssessmentInput, annualCollectionLi
   const components = system === "Storage tank system"
     ? ["Roof gutters and downpipes", "Leaf screen and first-flush diverter", `${suggestedTankLitres.toLocaleString("en-IN")} L storage tank`, "Overflow, mosquito-proof lid, and tap/pump", "Basic filtration before storage"]
     : system === "Groundwater recharge system"
-      ? ["Roof gutters and downpipes", "Leaf screen and first-flush diverter", "Silt trap and filter chamber", `${rechargeCapacityLitres.toLocaleString("en-IN")} L/year recharge provision`, "Recharge pit or borewell injection designed for the site"]
+      ? ["Roof gutters and downpipes", "First-flush diverter and filter", `${rechargeCapacityLitres.toLocaleString("en-IN")} L/year recharge capacity`, "Site-designed recharge pit"]
       : ["Roof gutters and downpipes", "Leaf screen and first-flush diverter", `${suggestedTankLitres.toLocaleString("en-IN")} L storage tank`, "Silt trap and filtration chamber", `${rechargeCapacityLitres.toLocaleString("en-IN")} L/year recharge overflow`, "Overflow diverter and inspection access"];
   return { system, reason, suggestedTankLitres, rechargeCapacityLitres, costRangeInr, components, assumptions: [`Annual household demand uses ${input.occupants} people × 135 L/day.`, `Roof collection uses ${input.annualRainfallMm} mm rainfall and the ${input.roofType} runoff coefficient.`, `Space preference: ${input.availableSpace}; building type: ${input.buildingType}.`] };
 }
