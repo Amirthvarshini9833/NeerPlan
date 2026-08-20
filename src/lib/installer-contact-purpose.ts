@@ -1,4 +1,5 @@
 export const installerContactPurposes = [
-  "Storage and groundwater recharge",
-  "Hybrid storage and groundwater recharge",
+  "Storage tank system",
+  "Groundwater recharge system",
+  "Hybrid storage + recharge system",
 ] as const;

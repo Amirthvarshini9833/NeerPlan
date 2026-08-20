@@ -30,7 +30,7 @@ export function AssessmentForm() {
   const [complianceStatus, setComplianceStatus] = useState("PENDING_MUNICIPAL_CONFIRMATION");
 
   function update(key: keyof AssessmentInput, value: string) {
-    setInput((current) => ({ ...current, [key]: key === "city" || key === "roofType" || key === "buildingType" || key === "availableSpace" ? value : Number(value) } as AssessmentInput));
+    setInput((current) => ({ ...current, [key]: key === "city" || key === "state" || key === "roofType" || key === "buildingType" || key === "availableSpace" ? value : Number(value) } as AssessmentInput));
     if (key === "annualRainfallMm") { setProvenance(manualProvenance); setRainfallMessage("Manual rainfall value selected."); }
     if (key === "roofAreaSqFt") setAreaProvenance(manualAreaProvenance);
     if (key === "city") { setProvenance(manualProvenance); setRainfallMessage(""); setSavedAssessmentId(null); }
