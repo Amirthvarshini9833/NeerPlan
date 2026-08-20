@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
+import { installerContactPurposes } from "@/lib/installer-contact-purpose";
 import { prisma } from "@/lib/prisma";
 
 const leadInput = z.object({
@@ -8,7 +9,7 @@ const leadInput = z.object({
   phone: z.string().trim().min(7).max(30).regex(/^[0-9+()\-\s]+$/, "Use a valid phone number."),
   city: z.string().trim().min(2).max(80),
   state: z.string().trim().min(2).max(80),
-  contactPurpose: z.string().trim().min(5).max(500),
+  contactPurpose: z.enum(installerContactPurposes),
 });
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {

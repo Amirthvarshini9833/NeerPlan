@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/components/language-provider";
+import { installerContactPurposes } from "@/lib/installer-contact-purpose";
 
 export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
   const [message, setMessage] = useState("");
@@ -41,7 +42,7 @@ export function InstallerLeadForm({ assessmentId }: { assessmentId: string }) {
       <label>{t("phone")}<input name="phone" type="tel" autoComplete="tel" minLength={7} maxLength={30} required /></label>
       <label>City<input name="city" autoComplete="address-level2" minLength={2} maxLength={80} required /></label>
       <label>State / UT<input name="state" autoComplete="address-level1" minLength={2} maxLength={80} required /></label>
-      <label>Purpose of contacting the installer<textarea name="contactPurpose" rows={3} minLength={5} maxLength={500} placeholder="Tell the installer what help you need" required /></label>
+      <label>Purpose of contacting the installer<select name="contactPurpose" defaultValue="" required><option value="" disabled>Select a system</option>{installerContactPurposes.map((purpose) => <option key={purpose} value={purpose}>{purpose}</option>)}</select></label>
       <button disabled={sending}>{sending ? t("sending") : t("requestSurvey")}</button>
       {message && <p className="form-message" role="status">{message}</p>}
     </form>
