@@ -10,10 +10,10 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
-      <Link className="brand" href="/">Neer<span>Plan</span></Link>
+      <Link className="brand" href="/" data-no-translate>Neer<span>Plan</span></Link>
       <nav aria-label="Primary navigation">
-        <Link href="/#assessment">{t("assessment")}</Link>
-        {session?.user?.email ? <>{session.user.role === "ADMIN" ? <Link href="/admin">Admin</Link> : session.user.role === "INSTALLER" ? <Link href="/installer">{t("installer")}</Link> : <Link href="/dashboard">{t("dashboard")}</Link>}<button className="header-signout" type="button" onClick={() => signOut({ callbackUrl: "/" })}>Logout</button></> : <Link href="/login">{t("signIn")}</Link>}<LanguageSelector />
+        <Link href="/#assessment" data-no-translate>{t("assessment")}</Link>
+        {session?.user?.email ? <>{session.user.role === "ADMIN" ? <Link href="/admin">Admin</Link> : session.user.role === "INSTALLER" ? <Link href="/installer" data-no-translate>{t("installer")}</Link> : <Link href="/dashboard" data-no-translate>{t("dashboard")}</Link>}<button className="header-signout" type="button" onClick={() => signOut({ callbackUrl: "/" })}>Logout</button></> : <Link href="/login" data-no-translate>{t("signIn")}</Link>}<LanguageSelector />
       </nav>
     </header>
   );

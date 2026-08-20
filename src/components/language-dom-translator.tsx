@@ -1,31 +1,294 @@
 "use client";
+
 import { useEffect } from "react";
 import { useLanguage } from "@/components/language-provider";
-const common = { "Draw your rooftop boundary.": "Draw your rooftop boundary.", Search: "Search", "Clear boundary": "Clear boundary", Normal: "Normal", Satellite: "Satellite", Terrain: "Terrain", "Roof area (sq ft)": "Roof area (sq ft)", "Roof type": "Roof type", "Building type": "Building type", "Available installation space": "Available installation space", "Annual rainfall (mm)": "Annual rainfall (mm)", "People using water": "People using water", "Use city estimate": "Use city estimate", "Location-based estimate": "Location-based estimate", "Calculate my potential →": "Calculate my potential →", "Save assessment": "Save assessment", "Annual collection": "Annual collection", "Suggested storage": "Suggested storage", "Annual savings": "Annual savings", "Expected payback": "Expected payback", "Use the layer switcher for Normal, Satellite, or Terrain views.": "Use the layer switcher for Normal, Satellite, or Terrain views." };
-const map: Record<string, Record<string, string>> = {
-  en: common,
-  ta: { ...common, "Draw your rooftop boundary.": "உங்கள் கூரை எல்லையை வரையுங்கள்.", Search: "தேடு", "Clear boundary": "எல்லையை அழி", Normal: "இயல்பு", Satellite: "செயற்கைக்கோள்", Terrain: "நிலப்பரப்பு", "Roof area (sq ft)": "கூரை பரப்பளவு (சதுர அடி)", "Roof type": "கூரை வகை", "Building type": "கட்டிட வகை", "Available installation space": "கிடைக்கும் நிறுவல் இடம்", "Annual rainfall (mm)": "ஆண்டு மழையளவு (மிமீ)", "People using water": "நீரைப் பயன்படுத்துபவர்கள்", "Use city estimate": "நகர மதிப்பீட்டைப் பயன்படுத்து", "Calculate my potential →": "என் திறனை கணக்கிடு →", "Save assessment": "மதிப்பீட்டை சேமி" },
-  hi: { ...common, "Draw your rooftop boundary.": "अपनी छत की सीमा बनाएं।", Search: "खोजें", "Clear boundary": "सीमा साफ करें", Normal: "सामान्य", Satellite: "उपग्रह", Terrain: "भूभाग", "Roof area (sq ft)": "छत का क्षेत्रफल (वर्ग फुट)", "Roof type": "छत का प्रकार", "Building type": "भवन का प्रकार", "Available installation space": "उपलब्ध स्थापना स्थान", "Annual rainfall (mm)": "वार्षिक वर्षा (मिमी)", "People using water": "पानी उपयोग करने वाले लोग", "Use city estimate": "शहर का अनुमान उपयोग करें", "Calculate my potential →": "मेरी क्षमता की गणना करें →", "Save assessment": "मूल्यांकन सहेजें" },
-  te: { ...common, "Draw your rooftop boundary.": "మీ పైకప్పు సరిహద్దును గీయండి.", Search: "వెతుకు", "Clear boundary": "సరిహద్దు తొలగించు", Normal: "సాధారణం", Satellite: "ఉపగ్రహం", Terrain: "భూభాగం", "Roof area (sq ft)": "పైకప్పు విస్తీర్ణం (చ.అ.)", "Roof type": "పైకప్పు రకం", "Building type": "భవనం రకం", "Annual rainfall (mm)": "వార్షిక వర్షపాతం (మిమీ)", "People using water": "నీరు ఉపయోగించే వ్యక్తులు", "Use city estimate": "నగర అంచనాను ఉపయోగించండి", "Calculate my potential →": "నా సామర్థ్యాన్ని లెక్కించండి →", "Save assessment": "అంచనాను సేవ్ చేయండి" },
-  kn: { ...common, "Draw your rooftop boundary.": "ನಿಮ್ಮ ಮೇಲ್ಛಾವಣಿ ಗಡಿಯನ್ನು ಬಿಡಿಸಿ.", Search: "ಹುಡುಕಿ", "Clear boundary": "ಗಡಿ ತೆರವುಗೊಳಿಸಿ", Normal: "ಸಾಮಾನ್ಯ", Satellite: "ಉಪಗ್ರಹ", Terrain: "ಭೂಪ್ರದೇಶ", "Roof area (sq ft)": "ಮೇಲ್ಛಾವಣಿ ವಿಸ್ತೀರ್ಣ (ಚದರ ಅಡಿ)", "Roof type": "ಮೇಲ್ಛಾವಣಿ ಪ್ರಕಾರ", "Building type": "ಕಟ್ಟಡ ಪ್ರಕಾರ", "Annual rainfall (mm)": "ವಾರ್ಷಿಕ ಮಳೆ (ಮಿಮೀ)", "People using water": "ನೀರು ಬಳಸುವ ಜನರು", "Use city estimate": "ನಗರ ಅಂದಾಜು ಬಳಸಿ", "Calculate my potential →": "ನನ್ನ ಸಾಮರ್ಥ್ಯ ಲೆಕ್ಕಿಸಿ →", "Save assessment": "ಮೌಲ್ಯಮಾಪನ ಉಳಿಸಿ" },
-  ml: { ...common, "Draw your rooftop boundary.": "നിങ്ങളുടെ മേൽക്കൂരയുടെ അതിർത്തി വരയ്ക്കുക.", Search: "തിരയുക", "Clear boundary": "അതിർത്തി മായ്ക്കുക", Normal: "സാധാരണ", Satellite: "ഉപഗ്രഹം", Terrain: "ഭൂപ്രദേശം", "Roof area (sq ft)": "മേൽക്കൂര വിസ്തീർണ്ണം (ചതുരശ്ര അടി)", "Roof type": "മേൽക്കൂര തരം", "Building type": "കെട്ടിട തരം", "Annual rainfall (mm)": "വാർഷിക മഴ (മിമീ)", "People using water": "വെള്ളം ഉപയോഗിക്കുന്നവർ", "Use city estimate": "നഗര കണക്കുകൂട്ടൽ ഉപയോഗിക്കുക", "Calculate my potential →": "എന്റെ സാധ്യത കണക്കാക്കുക →", "Save assessment": "വിലയിരുത്തൽ സംരക്ഷിക്കുക" },
+import type { Language } from "@/lib/i18n";
+
+const translatableAttributes = ["aria-label", "placeholder", "title"] as const;
+type TranslatableAttribute = (typeof translatableAttributes)[number];
+
+type TextTarget = {
+  node: Text;
+  attribute?: never;
+  source: string;
+  leadingWhitespace: string;
+  trailingWhitespace: string;
 };
-const originals = new WeakMap<Text, string>();
-Object.assign(map.ta, { "Turn every rooftop into a water source.": "ஒவ்வொரு கூரையையும் நீர் ஆதாரமாக மாற்றுங்கள்.", "NeerPlan helps households and communities assess, plan, and act on rainwater harvesting.": "மழைநீர் சேகரிப்பை மதிப்பிடவும், திட்டமிடவும், செயல்படுத்தவும் NeerPlan உதவுகிறது.", "Plan with confidence.": "நம்பிக்கையுடன் திட்டமிடுங்கள்.", "Start a free, transparent rooftop assessment below.": "கீழே இலவச, வெளிப்படையான கூரை மதிப்பீட்டைத் தொடங்குங்கள்.", Assessment: "மதிப்பீடு", Dashboard: "டாஷ்போர்டு", "Installer portal": "நிறுவுநர் தளம்" });
-Object.assign(map.hi, { "Turn every rooftop into a water source.": "हर छत को जल स्रोत में बदलें।", "NeerPlan helps households and communities assess, plan, and act on rainwater harvesting.": "NeerPlan वर्षा जल संचयन का आकलन और योजना बनाने में मदद करता है।", "Plan with confidence.": "विश्वास के साथ योजना बनाएं।", "Start a free, transparent rooftop assessment below.": "नीचे निःशुल्क पारदर्शी छत मूल्यांकन शुरू करें।", Assessment: "मूल्यांकन", Dashboard: "डैशबोर्ड", "Installer portal": "इंस्टॉलर पोर्टल" });
-Object.assign(map.te, { "Turn every rooftop into a water source.": "ప్రతి పైకప్పును నీటి వనరుగా మార్చండి.", "Plan with confidence.": "నమ్మకంతో ప్రణాళిక చేయండి.", Assessment: "అంచనా", Dashboard: "డాష్‌బోర్డ్", "Installer portal": "ఇన్‌స్టాలర్ పోర్టల్" });
-Object.assign(map.kn, { "Turn every rooftop into a water source.": "ಪ್ರತಿ ಮೇಲ್ಛಾವಣಿಯನ್ನು ನೀರಿನ ಮೂಲವನ್ನಾಗಿ ಮಾಡಿ.", "Plan with confidence.": "ವಿಶ್ವಾಸದಿಂದ ಯೋಜಿಸಿ.", Assessment: "ಮೌಲ್ಯಮಾಪನ", Dashboard: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್", "Installer portal": "ಇನ್‌ಸ್ಟಾಲರ್ ಪೋರ್ಟಲ್" });
-Object.assign(map.ml, { "Turn every rooftop into a water source.": "ഓരോ മേൽക്കൂരയും ജലസ്രോതസ്സാക്കാം.", "Plan with confidence.": "വിശ്വാസത്തോടെ ആസൂത്രണം ചെയ്യുക.", Assessment: "വിലയിരുത്തൽ", Dashboard: "ഡാഷ്ബോർഡ്", "Installer portal": "ഇൻസ്റ്റാളർ പോർട്ടൽ" });
-const details = { "FREE ASSESSMENT": "FREE ASSESSMENT", "Understand your rooftop potential.": "Understand your rooftop potential.", "Every estimate shows its calculation basis and can be refined during a site survey.": "Every estimate shows its calculation basis and can be refined during a site survey.", "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.": "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.", "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.": "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.", "Add at least 3 points to close the rooftop boundary.": "Add at least 3 points to close the rooftop boundary.", "Manual override available. Source: Manual user input": "Manual override available. Source: Manual user input", "Drawn area": "Drawn area" };
-Object.assign(map.ta, details, { "FREE ASSESSMENT": "இலவச மதிப்பீடு", "Understand your rooftop potential.": "உங்கள் கூரையின் திறனைப் புரிந்துகொள்ளுங்கள்.", "Every estimate shows its calculation basis and can be refined during a site survey.": "ஒவ்வொரு மதிப்பீட்டின் கணக்கீட்டு அடிப்படையையும் காணலாம்; தள ஆய்வில் மேம்படுத்தலாம்.", "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.": "இடத்தைத் தேடி, வரைபடத்தில் கூரையைச் சுற்றிக் கிளிக் செய்யுங்கள். வடிவத்தை மாற்ற குறியீடுகளை இழுக்கவும்.", "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.": "3–12 புள்ளிகளைக் கிளிக் செய்யவும். குறைந்தபட்சம் 20 சதுர அடி, அதிகபட்சம் 100,000 சதுர அடி.", "Add at least 3 points to close the rooftop boundary.": "கூரை எல்லையை மூட குறைந்தது 3 புள்ளிகளைச் சேர்க்கவும்.", "Manual override available. Source: Manual user input": "கைமுறை மாற்றம் கிடைக்கும். மூலம்: பயனர் உள்ளீடு", "Drawn area": "வரையப்பட்ட பரப்பளவு" });
-Object.assign(map.hi, details, { "FREE ASSESSMENT": "मुफ्त मूल्यांकन", "Understand your rooftop potential.": "अपनी छत की क्षमता समझें।", "Every estimate shows its calculation basis and can be refined during a site survey.": "हर अनुमान का आधार दिखाया जाता है और साइट सर्वेक्षण में इसे बेहतर किया जा सकता है।", "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.": "स्थान खोजें, फिर मानचित्र पर छत के चारों ओर क्लिक करें। आकार बदलने के लिए मार्कर खींचें।", "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.": "3–12 बिंदु चुनें। न्यूनतम 20 और अधिकतम 100,000 वर्ग फुट।", "Add at least 3 points to close the rooftop boundary.": "छत की सीमा बंद करने के लिए कम से कम 3 बिंदु जोड़ें।", "Manual override available. Source: Manual user input": "मैनुअल बदलाव उपलब्ध। स्रोत: उपयोगकर्ता इनपुट", "Drawn area": "खींचा गया क्षेत्र" });
-Object.assign(map.te, details, { "FREE ASSESSMENT": "ఉచిత అంచనా", "Understand your rooftop potential.": "మీ పైకప్పు సామర్థ్యాన్ని అర్థం చేసుకోండి.", "Every estimate shows its calculation basis and can be refined during a site survey.": "ప్రతి అంచనా లెక్కింపు ఆధారాన్ని చూపుతుంది; సైట్ సర్వేలో మెరుగుపరచవచ్చు.", "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.": "స్థలాన్ని వెతికి, మ్యాప్‌లో పైకప్పు చుట్టూ క్లిక్ చేయండి. ఆకారాన్ని మార్చడానికి మార్కర్లను లాగండి.", "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.": "3–12 పాయింట్లను క్లిక్ చేయండి. కనిష్ఠం 20, గరిష్ఠం 100,000 చదరపు అడుగులు.", "Add at least 3 points to close the rooftop boundary.": "పైకప్పు సరిహద్దును మూసేందుకు కనీసం 3 పాయింట్లు జోడించండి.", "Manual override available. Source: Manual user input": "మాన్యువల్ మార్పు అందుబాటులో ఉంది. మూలం: వినియోగదారు ఇన్‌పుట్", "Drawn area": "గీసిన విస్తీర్ణం" });
-Object.assign(map.kn, details, { "FREE ASSESSMENT": "ಉಚಿತ ಮೌಲ್ಯಮಾಪನ", "Understand your rooftop potential.": "ನಿಮ್ಮ ಮೇಲ್ಛಾವಣಿಯ ಸಾಮರ್ಥ್ಯವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ.", "Every estimate shows its calculation basis and can be refined during a site survey.": "ಪ್ರತಿ ಅಂದಾಜಿನ ಲೆಕ್ಕಾಚಾರದ ಆಧಾರವನ್ನು ತೋರಿಸಲಾಗುತ್ತದೆ; ಸ್ಥಳ ಸಮೀಕ್ಷೆಯಲ್ಲಿ ಸುಧಾರಿಸಬಹುದು.", "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.": "ಸ್ಥಳವನ್ನು ಹುಡುಕಿ, ನಕ್ಷೆಯಲ್ಲಿ ಮೇಲ್ಛಾವಣಿಯ ಸುತ್ತ ಕ್ಲಿಕ್ ಮಾಡಿ. ಆಕಾರ ಬದಲಿಸಲು ಗುರುತುಗಳನ್ನು ಎಳೆಯಿರಿ.", "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.": "3–12 ಬಿಂದುಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. ಕನಿಷ್ಠ 20, ಗರಿಷ್ಠ 100,000 ಚದರ ಅಡಿ.", "Add at least 3 points to close the rooftop boundary.": "ಮೇಲ್ಛಾವಣಿ ಗಡಿ ಮುಚ್ಚಲು ಕನಿಷ್ಠ 3 ಬಿಂದುಗಳನ್ನು ಸೇರಿಸಿ.", "Manual override available. Source: Manual user input": "ಕೈಯಿಂದ ಬದಲಾವಣೆ ಲಭ್ಯ. ಮೂಲ: ಬಳಕೆದಾರ ಇನ್‌ಪುಟ್", "Drawn area": "ಬರೆಯಲಾದ ವಿಸ್ತೀರ್ಣ" });
-Object.assign(map.ml, details, { "FREE ASSESSMENT": "സൗജന്യ വിലയിരുത്തൽ", "Understand your rooftop potential.": "നിങ്ങളുടെ മേൽക്കൂരയുടെ സാധ്യത മനസ്സിലാക്കുക.", "Every estimate shows its calculation basis and can be refined during a site survey.": "ഓരോ കണക്കിന്റെയും അടിസ്ഥാനം കാണാം; സൈറ്റ് സർവേയിൽ മെച്ചപ്പെടുത്താം.", "Search for a place, then click around the roof on the map. Drag markers to adjust the shape.": "സ്ഥലം തിരഞ്ഞ് മാപ്പിൽ മേൽക്കൂരയ്ക്ക് ചുറ്റും ക്ലിക്ക് ചെയ്യുക. ആകൃതി മാറ്റാൻ മാർക്കറുകൾ വലിക്കുക.", "Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.": "3–12 പോയിന്റുകൾ ക്ലിക്ക് ചെയ്യുക. കുറഞ്ഞത് 20, പരമാവധി 100,000 ചതുരശ്ര അടി.", "Add at least 3 points to close the rooftop boundary.": "മേൽക്കൂരയുടെ അതിർത്തി അടയ്ക്കാൻ കുറഞ്ഞത് 3 പോയിന്റുകൾ ചേർക്കുക.", "Manual override available. Source: Manual user input": "മാനുവൽ മാറ്റം ലഭ്യമാണ്. ഉറവിടം: ഉപയോക്തൃ ഇൻപുട്ട്", "Drawn area": "വരച്ച വിസ്തീർണ്ണം" });
-const recommendationPhrases = { "INSTALLATION RECOMMENDATION": "INSTALLATION RECOMMENDATION", "Storage tank system": "Storage tank system", "Groundwater recharge system": "Groundwater recharge system", "Hybrid storage + recharge system": "Hybrid storage + recharge system", "Suggested tank": "Suggested tank", "Recharge provision": "Recharge provision", "Indicative cost": "Indicative cost", "Basic component checklist": "Basic component checklist", "Roof gutters and downpipes": "Roof gutters and downpipes", "Leaf screen and first-flush diverter": "Leaf screen and first-flush diverter", "Silt trap and filter chamber": "Silt trap and filter chamber", "Recharge pit or borewell injection designed for the site": "Recharge pit or borewell injection designed for the site", "Calculation basis:": "Calculation basis:", "This is planning guidance only.": "This is planning guidance only.", "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation.": "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation." };
-Object.assign(map.ta, recommendationPhrases, { "INSTALLATION RECOMMENDATION": "நிறுவல் பரிந்துரை", "Storage tank system": "சேமிப்பு தொட்டி அமைப்பு", "Groundwater recharge system": "நிலத்தடி நீர் நிரப்பு அமைப்பு", "Hybrid storage + recharge system": "சேமிப்பு + நீர் நிரப்பு இணை அமைப்பு", "Suggested tank": "பரிந்துரைக்கப்பட்ட தொட்டி", "Recharge provision": "நீர் நிரப்பு ஏற்பாடு", "Indicative cost": "குறிப்பிடத்தக்க செலவு", "Basic component checklist": "அடிப்படை கூறுகள் சரிபார்ப்பு", "Roof gutters and downpipes": "கூரை கால்வாய்கள் மற்றும் குழாய்கள்", "Leaf screen and first-flush diverter": "இலை வடிகட்டி மற்றும் முதல் ஓட்ட மாற்றி", "Silt trap and filter chamber": "வண்டல் தடுப்பு மற்றும் வடிகட்டி அறை", "Calculation basis:": "கணக்கீட்டு அடிப்படை:", "This is planning guidance only.": "இது திட்டமிடல் வழிகாட்டுதல் மட்டுமே.", "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation.": "இறுதி வடிவமைப்பு, மண் நிலை, கட்டமைப்பு பாதுகாப்பு, நீர் தரம், அனுமதிகள் மற்றும் மேற்கோளை தகுதியான நிறுவுநர் அல்லது பொறியாளர் உறுதி செய்ய வேண்டும்." });
-Object.assign(map.hi, recommendationPhrases, { "INSTALLATION RECOMMENDATION": "स्थापना अनुशंसा", "Storage tank system": "भंडारण टैंक प्रणाली", "Groundwater recharge system": "भूजल पुनर्भरण प्रणाली", "Hybrid storage + recharge system": "भंडारण + पुनर्भरण प्रणाली", "Suggested tank": "सुझाया गया टैंक", "Recharge provision": "पुनर्भरण व्यवस्था", "Indicative cost": "अनुमानित लागत", "Basic component checklist": "मूल घटक सूची", "Roof gutters and downpipes": "छत की नालियां और पाइप", "Calculation basis:": "गणना का आधार:", "This is planning guidance only.": "यह केवल योजना मार्गदर्शन है।", "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation.": "अंतिम डिजाइन, मिट्टी, संरचनात्मक सुरक्षा, पानी की गुणवत्ता, परमिट और कीमत की पुष्टि योग्य इंस्टॉलर या इंजीनियर से कराएं।" });
-Object.assign(map.te, recommendationPhrases, { "INSTALLATION RECOMMENDATION": "ఇన్‌స్టాలేషన్ సిఫార్సు", "Storage tank system": "నిల్వ ట్యాంక్ వ్యవస్థ", "Groundwater recharge system": "భూగర్భజల రీచార్జ్ వ్యవస్థ", "Hybrid storage + recharge system": "నిల్వ + రీచార్జ్ వ్యవస్థ", "Suggested tank": "సూచించిన ట్యాంక్", "Recharge provision": "రీచార్జ్ ఏర్పాటు", "Indicative cost": "అంచనా ఖర్చు", "Basic component checklist": "ప్రాథమిక భాగాల జాబితా", "Roof gutters and downpipes": "పైకప్పు కాలువలు మరియు పైపులు", "Calculation basis:": "లెక్కింపు ఆధారం:", "This is planning guidance only.": "ఇది ప్రణాళిక మార్గదర్శకం మాత్రమే.", "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation.": "చివరి డిజైన్, మట్టి, నిర్మాణ భద్రత, నీటి నాణ్యత, అనుమతులు మరియు ధరను నిపుణుడైన ఇన్‌స్టాలర్ లేదా ఇంజనీర్ నిర్ధారించాలి." });
-Object.assign(map.kn, recommendationPhrases, { "INSTALLATION RECOMMENDATION": "ಅಳವಡಿಕೆ ಶಿಫಾರಸು", "Storage tank system": "ಸಂಗ್ರಹ ಟ್ಯಾಂಕ್ ವ್ಯವಸ್ಥೆ", "Groundwater recharge system": "ಭೂಗರ್ಭಜಲ ಮರುಪೂರಣ ವ್ಯವಸ್ಥೆ", "Hybrid storage + recharge system": "ಸಂಗ್ರಹ + ಮರುಪೂರಣ ವ್ಯವಸ್ಥೆ", "Suggested tank": "ಸೂಚಿಸಿದ ಟ್ಯಾಂಕ್", "Recharge provision": "ಮರುಪೂರಣ ವ್ಯವಸ್ಥೆ", "Indicative cost": "ಅಂದಾಜು ವೆಚ್ಚ", "Basic component checklist": "ಮೂಲ ಘಟಕಗಳ ಪಟ್ಟಿ", "Roof gutters and downpipes": "ಮೇಲ್ಛಾವಣಿ ಕಾಲುವೆಗಳು ಮತ್ತು ಪೈಪ್‌ಗಳು", "Calculation basis:": "ಲೆಕ್ಕಾಚಾರದ ಆಧಾರ:", "This is planning guidance only.": "ಇದು ಯೋಜನಾ ಮಾರ್ಗದರ್ಶನ ಮಾತ್ರ.", "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation.": "ಅಂತಿಮ ವಿನ್ಯಾಸ, ಮಣ್ಣು, ರಚನಾ ಸುರಕ್ಷತೆ, ನೀರಿನ ಗುಣಮಟ್ಟ, ಅನುಮತಿಗಳು ಮತ್ತು ಬೆಲೆಯನ್ನು ಅರ್ಹ ಸ್ಥಾಪಕ ಅಥವಾ ಇಂಜಿನಿಯರ್ ದೃಢೀಕರಿಸಬೇಕು." });
-Object.assign(map.ml, recommendationPhrases, { "INSTALLATION RECOMMENDATION": "ഇൻസ്റ്റാളേഷൻ ശുപാർശ", "Storage tank system": "സംഭരണി ടാങ്ക് സംവിധാനം", "Groundwater recharge system": "ഭൂഗർഭജല റീചാർജ് സംവിധാനം", "Hybrid storage + recharge system": "സംഭരണി + റീചാർജ് സംവിധാനം", "Suggested tank": "നിർദ്ദേശിച്ച ടാങ്ക്", "Recharge provision": "റീചാർജ് സംവിധാനം", "Indicative cost": "കണക്കാക്കിയ ചെലവ്", "Basic component checklist": "അടിസ്ഥാന ഘടകങ്ങളുടെ പട്ടിക", "Roof gutters and downpipes": "മേൽക്കൂര ചാലുകളും പൈപ്പുകളും", "Calculation basis:": "കണക്കിന്റെ അടിസ്ഥാനം:", "This is planning guidance only.": "ഇത് ആസൂത്രണ മാർഗ്ഗനിർദ്ദേശം മാത്രം.", "A qualified installer or engineer must confirm the final design, soil conditions, structural safety, water quality, permits, and quotation.": "അന്തിമ രൂപകൽപ്പന, മണ്ണ്, ഘടനാ സുരക്ഷ, ജലഗുണം, അനുമതികൾ, വില എന്നിവ യോഗ്യനായ ഇൻസ്റ്റാളർ അല്ലെങ്കിൽ എഞ്ചിനീയർ സ്ഥിരീകരിക്കണം." });
-export function LanguageDomTranslator() { const { language } = useLanguage(); useEffect(() => { const dictionary = map[language]; const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); const nodes: Text[] = []; let node: Node | null; while ((node = walker.nextNode())) nodes.push(node as Text); const keys = Object.keys(dictionary).sort((a, b) => b.length - a.length); for (const text of nodes) { const current = text.nodeValue ?? ""; if (!originals.has(text)) originals.set(text, current); const original = originals.get(text)!; let translated = original; for (const key of keys) translated = translated.split(key).join(dictionary[key]); text.nodeValue = translated; } }, [language]); return null; }
+
+type AttributeTarget = {
+  node: Element;
+  attribute: TranslatableAttribute;
+  source: string;
+  leadingWhitespace: string;
+  trailingWhitespace: string;
+};
+
+type TranslationTarget = TextTarget | AttributeTarget;
+
+class TranslationRequestError extends Error {
+  constructor(readonly status: number, message: string) {
+    super(message);
+  }
+}
+
+const originalTexts = new WeakMap<Text, string>();
+const originalAttributes = new WeakMap<Element, Map<TranslatableAttribute, string>>();
+const excludedSelector = "script, style, noscript, textarea, [contenteditable='true'], [data-no-translate]";
+const cachePrefix = "neerplan-gemini-translations-v5";
+const maxStringsPerRequest = 50;
+const maxCharactersPerRequest = 7_500;
+
+function splitWhitespace(value: string) {
+  const leadingWhitespace = value.match(/^\s*/)?.[0] ?? "";
+  const trailingWhitespace = value.match(/\s*$/)?.[0] ?? "";
+  return {
+    leadingWhitespace,
+    trailingWhitespace,
+    source: value.slice(leadingWhitespace.length, value.length - trailingWhitespace.length),
+  };
+}
+
+function canTranslate(element: Element | null, source: string) {
+  const trimmed = source.trim();
+  return Boolean(element)
+    && !element!.closest(excludedSelector)
+    && trimmed.length > 0
+    && trimmed.length <= 1_000
+    && /\p{L}/u.test(trimmed)
+    && !/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/.test(trimmed)
+    && !/https?:\/\//i.test(trimmed);
+}
+
+function getOriginalAttribute(element: Element, attribute: TranslatableAttribute) {
+  let attributes = originalAttributes.get(element);
+  if (!attributes) {
+    attributes = new Map();
+    originalAttributes.set(element, attributes);
+  }
+  if (!attributes.has(attribute)) attributes.set(attribute, element.getAttribute(attribute) ?? "");
+  return attributes.get(attribute) ?? "";
+}
+
+function collectTextTargets(root: Node): TextTarget[] {
+  const textNodes: Text[] = [];
+  if (root.nodeType === Node.TEXT_NODE) textNodes.push(root as Text);
+  else {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+    while ((node = walker.nextNode())) textNodes.push(node as Text);
+  }
+
+  return textNodes.flatMap((node) => {
+    if (!originalTexts.has(node)) originalTexts.set(node, node.nodeValue ?? "");
+    const sourceWithWhitespace = originalTexts.get(node) ?? "";
+    if (!canTranslate(node.parentElement, sourceWithWhitespace)) return [];
+    const { source, leadingWhitespace, trailingWhitespace } = splitWhitespace(sourceWithWhitespace);
+    return source ? [{ node, source, leadingWhitespace, trailingWhitespace }] : [];
+  });
+}
+
+function collectAttributeTargets(root: Node): AttributeTarget[] {
+  if (root.nodeType === Node.TEXT_NODE) return [];
+  const rootElement = root.nodeType === Node.ELEMENT_NODE ? root as Element : null;
+  const elements = [
+    ...(rootElement ? [rootElement] : []),
+    ...Array.from((rootElement ?? document.body).querySelectorAll(translatableAttributes.map((attribute) => `[${attribute}]`).join(","))),
+  ];
+
+  return elements.flatMap((element) => translatableAttributes.flatMap((attribute) => {
+    if (!element.hasAttribute(attribute)) return [];
+    const sourceWithWhitespace = getOriginalAttribute(element, attribute);
+    if (!canTranslate(element, sourceWithWhitespace)) return [];
+    const { source, leadingWhitespace, trailingWhitespace } = splitWhitespace(sourceWithWhitespace);
+    return source ? [{ node: element, attribute, source, leadingWhitespace, trailingWhitespace }] : [];
+  }));
+}
+
+function collectTargets(root: Node): TranslationTarget[] {
+  return [...collectTextTargets(root), ...collectAttributeTargets(root)];
+}
+
+function readCache(language: Language) {
+  try {
+    const stored = window.sessionStorage.getItem(`${cachePrefix}:${language}`);
+    const parsed: unknown = stored ? JSON.parse(stored) : {};
+    return new Map(Object.entries(parsed && typeof parsed === "object" ? parsed : {}).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+  } catch {
+    return new Map<string, string>();
+  }
+}
+
+function writeCache(language: Language, cache: Map<string, string>) {
+  try {
+    window.sessionStorage.setItem(`${cachePrefix}:${language}`, JSON.stringify(Object.fromEntries(cache)));
+  } catch {
+    // Translation still works when browser storage is disabled.
+  }
+}
+
+function batchStrings(strings: string[]) {
+  const batches: string[][] = [];
+  let batch: string[] = [];
+  let characterCount = 0;
+
+  for (const value of strings) {
+    if (batch.length === maxStringsPerRequest || characterCount + value.length > maxCharactersPerRequest) {
+      batches.push(batch);
+      batch = [];
+      characterCount = 0;
+    }
+    batch.push(value);
+    characterCount += value.length;
+  }
+  if (batch.length) batches.push(batch);
+  return batches;
+}
+
+async function requestTranslations(language: Language, strings: string[], signal: AbortSignal) {
+  const response = await fetch("/api/translate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ targetLanguage: language, strings }),
+    signal,
+  });
+  const data: unknown = await response.json().catch(() => null);
+
+  if (!response.ok || !data || typeof data !== "object" || !("translations" in data) || !Array.isArray(data.translations)) {
+    const message = data && typeof data === "object" && "error" in data && typeof data.error === "string" ? data.error : "Translation request failed.";
+    throw new TranslationRequestError(response.status, message);
+  }
+
+  const translations = data.translations;
+  if (translations.length !== strings.length || translations.some((translation) => typeof translation !== "string")) {
+    throw new TranslationRequestError(response.status, "Translation response was incomplete.");
+  }
+
+  return translations as string[];
+}
+
+export function LanguageDomTranslator() {
+  const { language } = useLanguage();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+    let queued = false;
+    let running = false;
+    let rerunRequested = false;
+    const cache = readCache(language);
+    const writtenTextNodes = new WeakSet<Text>();
+    const writtenAttributes = new WeakMap<Element, Set<TranslatableAttribute>>();
+
+    const markAttributeWrite = (element: Element, attribute: TranslatableAttribute) => {
+      const attributes = writtenAttributes.get(element) ?? new Set<TranslatableAttribute>();
+      attributes.add(attribute);
+      writtenAttributes.set(element, attributes);
+    };
+
+    const apply = (targets: TranslationTarget[]) => {
+      for (const target of targets) {
+        const translated = language === "en" ? target.source : cache.get(target.source);
+        if (!translated || !target.node.isConnected) continue;
+        const nextValue = `${target.leadingWhitespace}${translated}${target.trailingWhitespace}`;
+        if (target.attribute) {
+          if (target.node.getAttribute(target.attribute) !== nextValue) {
+            markAttributeWrite(target.node, target.attribute);
+            target.node.setAttribute(target.attribute, nextValue);
+          }
+        } else if (target.node.nodeValue !== nextValue) {
+          writtenTextNodes.add(target.node);
+          target.node.nodeValue = nextValue;
+        }
+      }
+    };
+
+    const translatePage = async () => {
+      if (running) {
+        rerunRequested = true;
+        return;
+      }
+      running = true;
+      try {
+        do {
+          rerunRequested = false;
+          const targets = collectTargets(document.body);
+
+          if (language === "en") {
+            apply(targets);
+            continue;
+          }
+
+          apply(targets);
+          const missing = [...new Set(targets.map(({ source }) => source).filter((source) => !cache.has(source)))];
+
+          for (const batch of batchStrings(missing)) {
+            const translations = await requestTranslations(language, batch, controller.signal);
+            if (cancelled) return;
+            batch.forEach((source, index) => cache.set(source, translations[index]));
+            writeCache(language, cache);
+          }
+          if (!cancelled) apply(targets);
+        } while (rerunRequested && !cancelled);
+      } catch (error) {
+        if (!cancelled && !(error instanceof DOMException && error.name === "AbortError")) {
+          const message = error instanceof TranslationRequestError && error.status === 503
+            ? "NeerPlan translation is not configured. Add GEMINI_API_KEY to the server environment."
+            : "NeerPlan translation was unavailable; displaying the built-in copy instead.";
+          console.warn(message);
+        }
+      } finally {
+        running = false;
+      }
+    };
+
+    const queueTranslation = () => {
+      if (queued) return;
+      queued = true;
+      queueMicrotask(() => {
+        queued = false;
+        if (!cancelled) void translatePage();
+      });
+    };
+
+    queueTranslation();
+
+    const observer = new MutationObserver((records) => {
+      const hasExternalChange = records.some((record) => {
+        if (record.type === "characterData") {
+          const node = record.target as Text;
+          if (!writtenTextNodes.has(node)) return true;
+          writtenTextNodes.delete(node);
+          return false;
+        }
+
+        if (record.type === "attributes") {
+          const attribute = record.attributeName as TranslatableAttribute | null;
+          const node = record.target as Element;
+          const attributes = writtenAttributes.get(node);
+          if (!attribute || !attributes?.has(attribute)) return true;
+          attributes.delete(attribute);
+          if (!attributes.size) writtenAttributes.delete(node);
+          return false;
+        }
+
+        return true;
+      });
+      if (hasExternalChange) queueTranslation();
+    });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: [...translatableAttributes],
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      observer.disconnect();
+    };
+  }, [language]);
+
+  return null;
+}

@@ -23,7 +23,7 @@ export function InstallerLeadList({ initialLeads }: { initialLeads: Lead[] }) {
 
   if (!leads.length) return <p className="empty-state">No survey requests have been assigned to you yet.</p>;
   return <><p className="form-message" role="status">{error}</p><div className="lead-list">{leads.map((lead) => <article key={lead.id}>
-    <div><p className="eyebrow">{lead.assessment.city} · received {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(lead.createdAt))}</p><h2>{lead.name}</h2><a href={`tel:${lead.phone}`}>{lead.phone}</a></div>
+    <div><p className="eyebrow"><span data-no-translate>{lead.assessment.city}</span> · received {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(lead.createdAt))}</p><h2 data-no-translate>{lead.name}</h2><a data-no-translate href={`tel:${lead.phone}`}>{lead.phone}</a></div>
     <dl><div><dt>Roof area</dt><dd>{lead.assessment.roofAreaSqFt.toLocaleString("en-IN")} sq ft</dd></div><div><dt>Suggested storage</dt><dd>{lead.assessment.suggestedTankLitres.toLocaleString("en-IN")} L</dd></div></dl>
     <label>Survey status<select value={lead.status} disabled={savingId === lead.id} onChange={(event) => updateStatus(lead.id, event.target.value)}>{statuses.map((status) => <option key={status} value={status}>{status.charAt(0) + status.slice(1).toLowerCase()}</option>)}</select></label>{lead.quoteCountRequested > 0 && <p className="field-help">Homeowner requested {lead.quoteCountRequested} quotes · {lead.quotes.length} added.</p>}<QuoteEntryForm leadId={lead.id} />
   </article>)}</div></>;

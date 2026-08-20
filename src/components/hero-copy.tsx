@@ -1,3 +1,3 @@
 "use client";
 import { useLanguage } from "@/components/language-provider";
-export function HeroCopy() { const { t } = useLanguage(); return <section className="hero"><p className="eyebrow">NEERPLAN · PRODUCTION BUILD</p><h1>{t("heroTitle")}</h1><p>{t("heroText")}</p><blockquote>“Plan with confidence. Start a free, transparent rooftop assessment below.”</blockquote></section>; }
+export function HeroCopy() { const { t } = useLanguage(); return <section className="hero"><p className="eyebrow"><span data-no-translate>NEERPLAN</span> · PRODUCTION BUILD</p><h1 data-no-translate>{t("heroTitle")}</h1><p data-no-translate>{t("heroText")}</p><blockquote>“Plan with confidence. Start a free, transparent rooftop assessment below.”</blockquote></section>; }

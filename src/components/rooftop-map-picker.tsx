@@ -83,7 +83,7 @@ export function RooftopMapPicker({ initialQuery, onAreaChange, onLocationChange 
   return <section className="rooftop-picker" aria-labelledby="rooftop-map-heading">
     <div className="rooftop-picker-heading"><div><p className="eyebrow">OPTIONAL MAP INPUT</p><h3 id="rooftop-map-heading">Draw your rooftop boundary.</h3><p>Search for a place, then click around the roof on the map. Drag markers to adjust the shape.</p></div><div className="rooftop-area-readout"><span>Drawn area</span><strong>{area >= 1 ? `${format(area)} sq ft` : "—"}</strong></div></div>
     <div className="map-search"><label className="sr-only" htmlFor="map-location-search">Search map location</label><input id="map-location-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search an Indian city or address" /><button type="button" className="secondary-button" disabled={searching} onClick={search}>{searching ? "Searching…" : "Search"}</button></div>
-    {places.length > 0 && <ul className="map-results">{places.map((place) => <li key={place.id}><button type="button" onClick={() => selectPlace(place)}>{place.name}</button></li>)}</ul>}
+    {places.length > 0 && <ul className="map-results" data-no-translate>{places.map((place) => <li key={place.id}><button type="button" onClick={() => selectPlace(place)}>{place.name}</button></li>)}</ul>}
     <div ref={mapElement} className="rooftop-map" role="application" aria-label="OpenStreetMap rooftop drawing map" />
     <div className="map-toolbar"><button type="button" className="secondary-button" onClick={clear}>Clear boundary</button><span>Click 3–12 points. Minimum 20 sq ft, maximum 100,000 sq ft.</span></div>
     {message && <p className="form-message" role="status">{message}</p>}

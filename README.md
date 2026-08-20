@@ -37,9 +37,15 @@ The committed `vercel.json` sets the Vercel build command to `pnpm build:vercel`
 | `DIRECT_URL` | Required | Required if Preview uses PostgreSQL | Direct PostgreSQL URL, used only by Prisma migration commands. |
 | `NEXTAUTH_SECRET` | Required | Required | Long unique random secret; mark it Sensitive. |
 | `NEXTAUTH_URL` | Required | Optional | Canonical production URL, for example `https://app.example.com`; set it only for the matching domain. |
+| `GEMINI_API_KEY` | Required for AI translations | Required for AI translations | Google AI Studio key, stored only on the server; never use a `NEXT_PUBLIC_` prefix. |
+| `GEMINI_MODEL` | Optional | Optional | Defaults to `gemini-3.5-flash-lite`. |
 | `NEXT_PUBLIC_APP_NAME` | Optional | Optional | Public display name only. |
 
 Set `ENABLE_EXPERIMENTAL_COREPACK=1` if Vercel does not automatically honor the pinned pnpm version. Do not add a migration command to the Vercel build step: run `pnpm db:postgres:migrate-deploy` before the first deployment and for every future schema migration.
+
+## AI translations
+
+The language selector batches visible, non-sensitive UI copy through the server-only `POST /api/translate` route, which calls Gemini and caches the results for the current browser session. Add `GEMINI_API_KEY` to `.env` or `.env.local` locally and to your deployment environment before testing it. The key is never sent to the browser; input is limited and the route accepts same-origin requests only.
 
 ## Installer operations
 
