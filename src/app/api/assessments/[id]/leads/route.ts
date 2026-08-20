@@ -21,7 +21,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   const installers = await prisma.user.findMany({ where: { role: "INSTALLER" }, select: { id: true, serviceAreas: true } });
   const city = assessment.city.toLowerCase();
-  const matched = installers.find((installer) => installer.serviceAreas?.split(",").some((area) => area.trim().toLowerCase() === city));
+  const matched = installers.find((installer) => installer.serviceAreas?.split(",").some((area) => area.trim().toLowerCase() === city)) ?? (installers.length === 1 ? installers[0] : undefined);
   const lead = await prisma.installerLead.create({ data: { assessmentId: assessment.id, installerId: matched?.id ?? null, ...parsed.data } });
   return NextResponse.json({ id: lead.id, matchedInstaller: Boolean(matched) }, { status: 201 });
 }
