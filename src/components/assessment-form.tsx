@@ -50,7 +50,8 @@ export function AssessmentForm() {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setLoading(true);
     try {
-      const response = await fetch("/api/assessments/calculate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }); const data = await response.json();
+      const payload = { ...input, city: input.city.trim(), state: input.state.trim(), roofAreaSqFt: Number(input.roofAreaSqFt), annualRainfallMm: Number(input.annualRainfallMm), occupants: Number(input.occupants) };
+      const response = await fetch("/api/assessments/calculate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to calculate."); setResult(data.result);
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Unable to calculate."); } finally { setLoading(false); }
   }

@@ -15,6 +15,10 @@ const assessmentInput = z.object({
 
 export async function POST(request: Request) {
   const parsed = assessmentInput.safeParse(await request.json());
-  if (!parsed.success) return NextResponse.json({ error: "Please check the assessment details." }, { status: 400 });
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const field = issue?.path.length ? `${String(issue.path[0])}: ` : "";
+    return NextResponse.json({ error: `${field}${issue?.message ?? "Please check the assessment details."}` }, { status: 400 });
+  }
   return NextResponse.json({ input: parsed.data, result: calculateAssessment(parsed.data), calculationVersion: "1.0" });
 }
