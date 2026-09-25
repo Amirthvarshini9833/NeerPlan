@@ -20,6 +20,8 @@ const languageNames = {
   ml: "Malayalam",
 } as const;
 
+const fallbackGeminiModels = ["gemini-3.5-flash-lite", "gemini-2.5-flash-lite", "gemini-2.5-flash"] as const;
+
 const geminiResponseSchema = z.object({
   candidates: z.array(z.object({
     content: z.object({
@@ -33,6 +35,10 @@ const translationSchema = z.object({ translations: z.array(z.string()) });
 function getGeminiText(payload: unknown) {
   const candidate = geminiResponseSchema.parse(payload).candidates[0];
   return candidate.content?.parts.map((part) => part.text ?? "").join("") ?? "";
+}
+
+function getGeminiModels() {
+  return [...new Set([process.env.GEMINI_MODEL, ...fallbackGeminiModels].map((model) => model?.trim()).filter((model): model is string => Boolean(model)))];
 }
 
 export async function POST(request: NextRequest) {
@@ -56,49 +62,64 @@ export async function POST(request: NextRequest) {
     `Translate each item in the JSON array from English into ${languageNames[targetLanguage]}.`,
     "Return one translation for every input item in exactly the same order.",
     "Preserve numbers, units, currency symbols, URLs, line breaks, punctuation, and text in braces exactly.",
-    "Keep only the literal NeerPlan brand name unchanged; translate every surrounding word in the same item.",
+    "Keep the NeerPlan brand name unchanged in any capitalization, including NEERPLAN; translate every surrounding word in the same item.",
     "Do not translate personal names or email addresses.",
     "Some items may already be in the target language; return them unchanged.",
     `Input: ${JSON.stringify(strings)}`,
   ].join("\n");
 
   try {
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite"}:generateContent`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: 4_096,
-            responseMimeType: "application/json",
-            responseJsonSchema: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                translations: {
-                  type: "array",
-                  minItems: strings.length,
-                  maxItems: strings.length,
-                  items: { type: "string" },
-                },
-              },
-              required: ["translations"],
-            },
-          },
-          store: false,
-        }),
-        signal: AbortSignal.timeout(30_000),
-      },
-    );
+    let responseBody: unknown = null;
+    let providerStatus = 502;
+    let providerMessage: string | undefined;
 
-    const responseBody: unknown = await geminiResponse.json().catch(() => null);
-    if (!geminiResponse.ok) {
-      const providerMessage = responseBody && typeof responseBody === "object" && "error" in responseBody
+    for (const model of getGeminiModels()) {
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              maxOutputTokens: 4_096,
+              responseMimeType: "application/json",
+              responseJsonSchema: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  translations: {
+                    type: "array",
+                    minItems: strings.length,
+                    maxItems: strings.length,
+                    items: { type: "string" },
+                  },
+                },
+                required: ["translations"],
+              },
+            },
+            store: false,
+          }),
+          signal: AbortSignal.timeout(30_000),
+        },
+      );
+
+      responseBody = await geminiResponse.json().catch(() => null);
+      providerStatus = geminiResponse.status;
+      if (geminiResponse.ok) break;
+
+      providerMessage = responseBody && typeof responseBody === "object" && "error" in responseBody
         && responseBody.error && typeof responseBody.error === "object" && "message" in responseBody.error
         && typeof responseBody.error.message === "string" ? responseBody.error.message : undefined;
-      console.error("Gemini translation request failed", { status: geminiResponse.status, providerMessage });
+
+      if (geminiResponse.status !== 404) {
+        console.error("Gemini translation request failed", { model, status: providerStatus, providerMessage });
+        return NextResponse.json({ error: "Translation is temporarily unavailable." }, { status: 502 });
+      }
+    }
+
+    if (providerStatus === 404) {
+      console.error("No configured Gemini translation model was available", { models: getGeminiModels(), providerMessage });
       return NextResponse.json({ error: "Translation is temporarily unavailable." }, { status: 502 });
     }
 
