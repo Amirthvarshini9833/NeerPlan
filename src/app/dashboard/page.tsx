@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       <h2 id="history-heading">Saved assessments</h2>
       <div className="history-grid">
         {assessments.map((assessment) => <article key={assessment.id}>
-          <p className="eyebrow"><span data-no-translate>{assessment.city}</span> · {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(assessment.createdAt)}</p>
+          <p className="eyebrow"><span>{assessment.city}</span> · {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(assessment.createdAt)}</p>
           <strong>{format(assessment.annualCollectionLitres)} L <span>annual collection</span></strong>
           <dl><div><dt>Storage</dt><dd>{format(assessment.suggestedTankLitres)} L</dd></div><div><dt>Setup estimate</dt><dd>₹{format(assessment.estimatedSetupCostInr)}</dd></div><div><dt>Payback</dt><dd>{assessment.paybackYears.toFixed(1)} years</dd></div></dl><Link className="report-link" href={`/assessments/${assessment.id}/report`}>Open printable report</Link>
         </article>)}
